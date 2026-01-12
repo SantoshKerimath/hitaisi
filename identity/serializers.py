@@ -9,6 +9,19 @@ class OrganizationSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
     class Meta:
         model = User
-        fields = ['id', 'email', 'organization', 'role', 'is_active']
+        fields = ['id', 'email', 'password', 'organization', 'role']
+
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+
+        # auto-fill username so Django is satisfied
+        validated_data['username'] = validated_data['email']
+
+        user = User(**validated_data)
+        user.set_password(password)   # hashes password correctly
+        user.save()
+        return user
