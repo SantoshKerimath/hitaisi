@@ -41,6 +41,10 @@ INSTALLED_APPS = [
     'drf_spectacular',
     
     'identity',
+    'benefits',
+    'tickets',
+    'audit.apps.AuditConfig',
+    'claims',
 ]
 
 MIDDLEWARE = [
@@ -49,6 +53,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'audit.middleware.CurrentUserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -125,13 +130,24 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
+    ],
 }
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'HITAISI API',
     'DESCRIPTION': 'Health Insurance Benefits Technology Infrastructure Platform',
     'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,   # 🔴 THIS LINE FIXES FILE UPLOAD UI
 }
 
+
 AUTH_USER_MODEL = 'identity.User'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
