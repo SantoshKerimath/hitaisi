@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+from rest_framework.response import Response
 from rest_framework import generics
 from .models import SupportTicket
 from .serializers import SupportTicketSerializer, TicketMessageSerializer
@@ -39,3 +39,28 @@ class AddTicketMessageView(generics.CreateAPIView):
         if new_status:
             msg.ticket.status = new_status
             msg.ticket.save()
+
+
+class UpdateTicketStatusView(generics.UpdateAPIView):
+    queryset = SupportTicket.objects.all()
+    serializer_class = SupportTicketSerializer
+    permission_classes = [IsRole]
+    allowed_roles = ['org_admin', 'ops_user', 'broker_user']
+
+    def update(self, request, *args, **kwargs):
+        ticket = self.get_object()
+        new_status = request.data.get("status")
+
+        # Valid transitions
+        if ticket.status == "open" and new_status == "in_progress":
+            ticket.status = "in_progress"
+        elif ticket.status == "in_progress" and new_status == "closed":
+            ticket.status = "closed"
+        else:
+            return Response(
+                {"error": "Invalid status transition"},
+                status=400
+            )
+
+        ticket.save()
+        return Response({"status": ticket.status})

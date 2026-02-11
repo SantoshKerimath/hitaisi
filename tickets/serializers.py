@@ -11,6 +11,16 @@ class TicketMessageSerializer(serializers.ModelSerializer):
 
 class SupportTicketSerializer(serializers.ModelSerializer):
     messages = TicketMessageSerializer(many=True, read_only=True)
+
     class Meta:
         model = SupportTicket
-        fields = '__all__'
+        fields = [
+            "id",
+            "policy",
+            "subject",
+            "assigned_to_role",
+            "status",
+            "messages",
+            "created_at"
+        ]
+        read_only_fields = ["status", "created_at"]

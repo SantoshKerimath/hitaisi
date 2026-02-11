@@ -23,10 +23,13 @@ from drf_spectacular.views import (
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
 from django.conf.urls.static import static
+from core.views import HealthCheckView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    path('api/health/', HealthCheckView.as_view()),
 
     # OpenAPI schema
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

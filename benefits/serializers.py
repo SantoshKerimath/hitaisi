@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.utils.crypto import get_random_string
+from django.conf import settings
 from .models import (
     Client, Product, ProductCoverage,
     Policy, PolicyCoverage, Member,
@@ -71,9 +72,13 @@ class MemberSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         policy = validated_data['policy']
 
-        # Default cover dates if not supplied
-        cover_start = validated_data.get('cover_start_date') or policy.start_date
-        cover_end = validated_data.get('cover_end_date') or policy.end_date
+        # Remove cover dates if provided
+        cover_start = validated_data.pop('cover_start_date', None)
+        cover_end = validated_data.pop('cover_end_date', None)
+
+        # Default cover dates to policy if missing
+        cover_start = cover_start or policy.start_date
+        cover_end = cover_end or policy.end_date
 
         member = Member.objects.create(
             **validated_data,
@@ -94,7 +99,7 @@ class MemberSerializer(serializers.ModelSerializer):
 
         # Create login only for employee
         if member.relation == 'employee':
-            temp_password = get_random_string(8)
+            temp_password = "Test@123" if settings.DEBUG else get_random_string(8)
             user = User.objects.create(
                 email=f"{member.employee_code.lower()}@member.local",
                 username=f"mem_{member.id}",
@@ -108,7 +113,6 @@ class MemberSerializer(serializers.ModelSerializer):
         
         member.save()
         return member
-
 
 
 class PolicyDocumentSerializer(serializers.ModelSerializer):
