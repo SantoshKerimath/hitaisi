@@ -1,7 +1,6 @@
 import csv
 from enum import member
 from rest_framework import generics, permissions, status
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from drf_spectacular.utils import extend_schema
@@ -16,6 +15,7 @@ from .serializers import (
 )
 from identity.permissions import IsRole
 from benefits.services.premium_engine import calculate_member_premium
+from core.base_views import BaseAPIView
 
 
 # ---- Client ----
@@ -89,7 +89,7 @@ class MemberListView(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]
 
 
-class PolicyStatusUpdateView(APIView):
+class PolicyStatusUpdateView(BaseAPIView):
     permission_classes = [IsRole]
     allowed_roles = ['ops_user', 'org_admin']  # ops issues, HR accepts
 
@@ -128,7 +128,7 @@ class PolicyDocumentListView(generics.ListAPIView):
 
 
 @extend_schema(request=PolicyStatusSerializer, responses=PolicyStatusSerializer)
-class PolicyStatusUpdateView(APIView):
+class PolicyStatusUpdateView(BaseAPIView):
     permission_classes = [IsRole]
     allowed_roles = ['ops_user', 'org_admin']
 
@@ -185,7 +185,7 @@ class MemberDeleteView(generics.DestroyAPIView):
 
 
 @extend_schema(request=None, responses=None, description="Bulk upload members CSV")
-class BulkMemberUploadView(APIView):
+class BulkMemberUploadView(BaseAPIView):
     permission_classes = [IsRole]
     allowed_roles = ['org_admin']
     parser_classes = [MultiPartParser]

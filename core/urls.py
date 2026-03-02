@@ -29,28 +29,25 @@ from core.views import HealthCheckView
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('api/health/', HealthCheckView.as_view()),
+    # API v1
+    path('api/v1/', include([
+        path('health/', HealthCheckView.as_view()),
 
-    # OpenAPI schema
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+        # Auth
+        path('auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+        path('auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
-    # Swagger UI
-    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema')),
+        # App routes
+        path('', include('identity.urls')),
+        path('', include('benefits.urls')),
+        path('tickets/', include('tickets.urls')),
+        path('audit/', include('audit.urls')),
+        path('claims/', include('claims.urls')),
+    ])),
 
-    # API routes
-    path('api/', include('identity.urls')),
-
-    # JWT Auth endpoints
-    path('api/auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-
-    path('api/', include('benefits.urls')),
-
-    path('api/tickets/', include('tickets.urls')),
-    path('api/audit/', include('audit.urls')),
-    path('api/claims/', include('claims.urls')),
-
-
+    # OpenAPI
+    path('api/v1/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/v1/docs/', SpectacularSwaggerView.as_view(url_name='schema')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

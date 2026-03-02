@@ -1,4 +1,5 @@
 import pytest
+from django.urls import reverse
 from rest_framework.test import APIClient
 from datetime import date, timedelta
 from identity.models import Organization, User
@@ -7,11 +8,12 @@ from benefits.models import (
     PremiumRate, PremiumBuffer
 )
 
+
 @pytest.mark.django_db
 def test_employee_add_and_delete_dependent():
 
-    # Setup org + HR
     org = Organization.objects.create(name="Employer", org_type="employer")
+
     hr = User.objects.create(
         email="hr@test.com",
         username="hr",
@@ -43,6 +45,7 @@ def test_employee_add_and_delete_dependent():
     )
 
     today = date.today()
+
     policy = Policy.objects.create(
         policy_number="POL1",
         client=client_obj,
@@ -53,11 +56,15 @@ def test_employee_add_and_delete_dependent():
     )
 
     PremiumBuffer.objects.create(policy=policy)
-    
+
     api_client = APIClient()
 
+    login_url = reverse("token_obtain_pair")
+    member_create_url = reverse("member-create")
+    dependent_add_url = reverse("member-dependent-add")
+
     login = api_client.post(
-        "/api/auth/login/",
+        login_url,
         {"email": "hr@test.com", "password": "Hr@123"},
         format="json"
     )
@@ -65,9 +72,9 @@ def test_employee_add_and_delete_dependent():
     token = login.data["access"]
     api_client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
 
-    # Add Employee first (via API)
+    # Add employee
     response = api_client.post(
-        "/api/members/",
+        member_create_url,
         {
             "policy": policy.id,
             "name": "John",
@@ -85,26 +92,28 @@ def test_employee_add_and_delete_dependent():
 
     assert response.status_code == 201
 
-    # NOW employee user exists
+    # Set password for auto-created employee
     employee_user = User.objects.get(email="emp1@member.local")
     employee_user.set_password("Emp@123")
     employee_user.save()
 
     api_client = APIClient()
+
     login = api_client.post(
-        "/api/auth/login/",
+        login_url,
         {
             "email": employee_user.email,
             "password": "Emp@123"
         },
         format="json"
     )
+
     token = login.data["access"]
     api_client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
 
-    # Add spouse dependent
+    # Add dependent
     response = api_client.post(
-        "/api/member/dependents/add/",
+        dependent_add_url,
         {
             "policy": policy.id,
             "name": "Jane",

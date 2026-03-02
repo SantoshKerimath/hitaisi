@@ -3,7 +3,7 @@ from identity.models import User
 from benefits.models import Policy
 
 class SupportTicket(models.Model):
-    STATUS = [
+    TICKET_STATUS = [
         ('open', 'Open'),
         ('in_progress', 'In Progress'),
         ('closed', 'Closed'),
@@ -13,7 +13,7 @@ class SupportTicket(models.Model):
     raised_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tickets_raised")
     assigned_to_role = models.CharField(max_length=30)  # ops_user / broker_user / org_admin
     subject = models.CharField(max_length=255)
-    status = models.CharField(max_length=20, choices=STATUS, default='open')
+    status = models.CharField(max_length=20, choices=TICKET_STATUS, default='open')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

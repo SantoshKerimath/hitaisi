@@ -1,4 +1,5 @@
 import pytest
+from django.urls import reverse
 from rest_framework.test import APIClient
 from identity.models import Organization, User
 
@@ -21,8 +22,10 @@ def test_platform_admin_login():
 
     client = APIClient()
 
+    url = reverse("token_obtain_pair")
+
     response = client.post(
-        "/api/auth/login/",
+        url,
         {
             "email": "admin@hitaisi.com",
             "password": "Admin@123"
