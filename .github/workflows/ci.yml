@@ -29,6 +29,7 @@ jobs:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/hitaisi
       DJANGO_ENV: production
       DJANGO_SETTINGS_MODULE: core.settings.base
+      SECRET_KEY: ci-secret-key
       PYTHON_VERSION: 3.12
 
     steps:
