@@ -36,7 +36,7 @@ def test_ticket_creation():
     api_client = APIClient()
 
     login_url = reverse("token_obtain_pair")
-    ticket_create_url = reverse("ticket-create")
+    ticket_create_url = reverse("create-ticket")
 
     login = api_client.post(
         login_url,

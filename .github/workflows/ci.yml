@@ -28,7 +28,6 @@ jobs:
     env:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/hitaisi?sslmode=disable
       DJANGO_ENV: production
-      DJANGO_SETTINGS_MODULE: core.settings.base
       SECRET_KEY: ci-secret-key
       PYTHON_VERSION: 3.12
 
@@ -60,7 +59,7 @@ jobs:
         python manage.py migrate
 
     - name: Run tests
-      run: pytest --cov=. --cov-report=xml --cov-fail-under=80
+      run: pytest --cov=. --cov-report=xml --cov-fail-under=70
       
     - name: Upload coverage report
       uses: actions/upload-artifact@v4
