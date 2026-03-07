@@ -26,7 +26,7 @@ jobs:
           --health-retries=5
 
     env:
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432/hitaisi
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/hitaisi?sslmode=disable
       DJANGO_ENV: production
       DJANGO_SETTINGS_MODULE: core.settings.base
       SECRET_KEY: ci-secret-key

@@ -80,14 +80,21 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 if DJANGO_ENV == "production":
+
+    DATABASE_URL = os.environ.get("DATABASE_URL")
+
+    ssl_required = True
+    if DATABASE_URL and "sslmode=disable" in DATABASE_URL:
+        ssl_required = False
+
     DATABASES = {
         "default": dj_database_url.config(
-            default=os.environ.get("DATABASE_URL"),
+            default=DATABASE_URL,
             conn_max_age=600,
-            ssl_require=True,
+            ssl_require=ssl_required,
         )
     }
-
+    
 elif DJANGO_ENV == "docker":
     DATABASES = {
         "default": {
