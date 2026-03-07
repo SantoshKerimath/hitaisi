@@ -24,3 +24,5 @@ if SENTRY_DSN:
         traces_sample_rate=0.1,
         send_default_pii=True,
     )
+
+print("SECRET_KEY present:", bool(os.environ.get("SECRET_KEY")))
