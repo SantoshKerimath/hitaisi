@@ -1,6 +1,7 @@
 #!/bin/sh
 
 echo "Starting HITAISI..."
+echo "SECRET_KEY exists? $SECRET_KEY"
 
 # Only wait for postgres in docker/local
 if [ "$DJANGO_ENV" = "docker" ]; then
