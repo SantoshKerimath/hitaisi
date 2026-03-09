@@ -9,9 +9,16 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
+USE_X_FORWARDED_HOST = True
+
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://tarkavada.com",
+    "https://www.tarkavada.com",
+]
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
