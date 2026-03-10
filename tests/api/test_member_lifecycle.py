@@ -11,7 +11,7 @@ from benefits.models import (
 @pytest.mark.django_db
 def test_employee_add_and_delete_dependent(authenticated_client, hr_user):
 
-    org = hr_user.Organization
+    org = hr_user.organization
 
     client_obj = Client.objects.create(name="Client", organization=org)
     product = Product.objects.create(name="Product", base_sum_insured=500000)
