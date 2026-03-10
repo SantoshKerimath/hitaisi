@@ -8,7 +8,7 @@ from datetime import date, timedelta
 
 
 @pytest.mark.django_db
-def test_ticket_creation():
+def test_ticket_creation(authenticated_client):
 
     org = Organization.objects.create(name="Employer", org_type="employer")
 
@@ -33,21 +33,19 @@ def test_ticket_creation():
         end_date=date.today() + timedelta(days=365)
     )
 
-    api_client = APIClient()
-
     login_url = reverse("token_obtain_pair")
     ticket_create_url = reverse("create-ticket")
 
-    login = api_client.post(
+    login = authenticated_client.post(
         login_url,
         {"email": "user@test.com", "password": "Test@123"},
         format="json"
     )
 
     token = login.data["access"]
-    api_client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
+    authenticated_client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
 
-    response = api_client.post(
+    response = authenticated_client.post(
         ticket_create_url,
         {
             "policy": policy.id,

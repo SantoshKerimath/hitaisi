@@ -1,10 +1,16 @@
+import os
 import requests
 
-
-BASE_URL = "https://tarkavada.com"
+BASE_URL = os.getenv("BASE_URL")
 
 
 def test_health_endpoint():
-    response = requests.get(f"{BASE_URL}/api/v1/health/")
+
+    assert BASE_URL
+
+    response = requests.get(
+        f"{BASE_URL}/health/",
+        timeout=10
+    )
 
     assert response.status_code == 200

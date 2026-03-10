@@ -78,3 +78,31 @@ def base_policy(employer_org, base_product):
     PremiumBuffer.objects.create(policy=policy)
 
     return policy
+
+
+@pytest.fixture
+def api_client():
+    return APIClient()
+
+
+@pytest.fixture
+def authenticated_client(api_client, hr_user):
+
+    login_url = reverse("token_obtain_pair")
+
+    response = api_client.post(
+        login_url,
+        {
+            "email": "hr@test.com",
+            "password": "Hr@123"
+        },
+        format="json"
+    )
+
+    token = response.data["access"]
+
+    api_client.credentials(
+        HTTP_AUTHORIZATION=f"Bearer {token}"
+    )
+
+    return api_client

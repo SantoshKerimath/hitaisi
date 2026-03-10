@@ -1,7 +1,7 @@
 import os
 import requests
 
-BASE_URL = os.getenv("BASE_URL", "https://tarkavada.com/api/v1")
+BASE_URL = os.getenv("BASE_URL")
 TEST_EMAIL = os.getenv("TEST_EMAIL")
 TEST_PASSWORD = os.getenv("TEST_PASSWORD")
 
@@ -13,7 +13,8 @@ def test_member_create():
         json={
             "email": TEST_EMAIL,
             "password": TEST_PASSWORD
-        }
+        },
+        timeout=10
     )
 
     assert login.status_code == 200
@@ -30,7 +31,8 @@ def test_member_create():
             "name": "CI Test Employee",
             "age": 30
         },
-        headers=headers
+        headers=headers,
+        timeout=10
     )
 
     assert response.status_code in {200, 201}

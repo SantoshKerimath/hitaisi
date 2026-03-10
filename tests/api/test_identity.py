@@ -6,6 +6,7 @@ from identity.models import Organization, User
 
 @pytest.mark.django_db
 def test_platform_admin_login():
+
     org = Organization.objects.create(
         name="HITAISI",
         org_type="insurer"
@@ -17,6 +18,7 @@ def test_platform_admin_login():
         role="platform_admin",
         organization=org
     )
+
     admin.set_password("Admin@123")
     admin.save()
 
@@ -35,3 +37,4 @@ def test_platform_admin_login():
 
     assert response.status_code == 200
     assert "access" in response.data
+    assert "refresh" in response.data

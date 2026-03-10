@@ -10,7 +10,7 @@ from benefits.models import (
 
 
 @pytest.mark.django_db
-def test_employee_add_and_delete_dependent():
+def test_employee_add_and_delete_dependent(authenticated_client):
 
     org = Organization.objects.create(name="Employer", org_type="employer")
 
@@ -57,23 +57,21 @@ def test_employee_add_and_delete_dependent():
 
     PremiumBuffer.objects.create(policy=policy)
 
-    api_client = APIClient()
-
     login_url = reverse("token_obtain_pair")
     member_create_url = reverse("member-create")
     dependent_add_url = reverse("member-dependent-add")
 
-    login = api_client.post(
+    login = authenticated_client.post(
         login_url,
         {"email": "hr@test.com", "password": "Hr@123"},
         format="json"
     )
 
     token = login.data["access"]
-    api_client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
+    authenticated_client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
 
     # Add employee
-    response = api_client.post(
+    response = authenticated_client.post(
         member_create_url,
         {
             "policy": policy.id,
@@ -97,9 +95,7 @@ def test_employee_add_and_delete_dependent():
     employee_user.set_password("Emp@123")
     employee_user.save()
 
-    api_client = APIClient()
-
-    login = api_client.post(
+    login = authenticated_client.post(
         login_url,
         {
             "email": employee_user.email,
@@ -109,10 +105,10 @@ def test_employee_add_and_delete_dependent():
     )
 
     token = login.data["access"]
-    api_client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
+    authenticated_client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
 
     # Add dependent
-    response = api_client.post(
+    response = authenticated_client.post(
         dependent_add_url,
         {
             "policy": policy.id,

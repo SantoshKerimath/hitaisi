@@ -4,8 +4,7 @@ from benefits.models import PremiumRate, PremiumBuffer
 
 
 @pytest.mark.django_db
-def test_member_add_updates_premium_buffer(hr_client, base_policy, base_product):
-
+def test_member_add_updates_premium_buffer(authenticated_client, base_policy, base_product):
     PremiumRate.objects.create(
         product=base_product,
         relation="employee",
@@ -17,7 +16,7 @@ def test_member_add_updates_premium_buffer(hr_client, base_policy, base_product)
 
     member_url = reverse("member-create")
 
-    response = hr_client.post(
+    response = authenticated_client.post(
         member_url,
         {
             "policy": base_policy.id,
