@@ -1,0 +1,31 @@
+name: Post Deploy Tests
+
+on:
+  workflow_run:
+    workflows: ["Deploy HITAISI"]
+    types:
+      - completed
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Install dependencies
+        run: |
+          pip install requests pytest
+
+      - name: Run integration tests
+        env:
+          BASE_URL: https://tarkavada.com/api/v1
+          TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+        run: |
+          pytest -v test_integration

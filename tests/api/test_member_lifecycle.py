@@ -8,20 +8,10 @@ from benefits.models import (
     PremiumRate, PremiumBuffer
 )
 
-
 @pytest.mark.django_db
-def test_employee_add_and_delete_dependent(authenticated_client):
+def test_employee_add_and_delete_dependent(authenticated_client, hr_user):
 
-    org = Organization.objects.create(name="Employer", org_type="employer")
-
-    hr = User.objects.create(
-        email="hr@test.com",
-        username="hr",
-        role="org_admin",
-        organization=org
-    )
-    hr.set_password("Hr@123")
-    hr.save()
+    org = hr_user.Organization
 
     client_obj = Client.objects.create(name="Client", organization=org)
     product = Product.objects.create(name="Product", base_sum_insured=500000)
