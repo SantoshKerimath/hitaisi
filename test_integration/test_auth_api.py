@@ -1,32 +1,14 @@
 import os
-import requests
+from test_integration.helpers import create_ci_user, get_access_token
 
 BASE_URL = os.getenv("BASE_URL")
-TEST_EMAIL = os.getenv("TEST_EMAIL")
-TEST_PASSWORD = os.getenv("TEST_PASSWORD")
-
+ADMIN_EMAIL = os.getenv("TEST_EMAIL")
+ADMIN_PASSWORD = os.getenv("TEST_PASSWORD")
 
 def test_login():
 
-    assert BASE_URL
-    assert TEST_EMAIL
-    assert TEST_PASSWORD
+    admin_token = get_access_token(ADMIN_EMAIL, ADMIN_PASSWORD, timeout=10)
 
-    response = requests.post(
-        f"{BASE_URL}/auth/login/",
-        json={
-            "email": TEST_EMAIL,
-            "password": TEST_PASSWORD
-        },
-        timeout=10
-    )
+    create_ci_user(admin_token)
 
-    if response.status_code != 200:
-        print(response.text)
-
-    assert response.status_code == 200
-
-    data = response.json()
-
-    assert "access" in data
-    assert "refresh" in data
+    _ = get_access_token("ci-test@tarkavada.com", "CiPass123", timeout=10)
