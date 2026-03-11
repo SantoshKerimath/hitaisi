@@ -27,5 +27,6 @@ jobs:
           BASE_URL: https://tarkavada.com/api/v1
           TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
           TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+          INTEGRATION_TEST_TIMEOUT: 60
         run: |
           pytest -v test_integration

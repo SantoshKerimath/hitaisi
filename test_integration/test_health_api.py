@@ -1,7 +1,7 @@
 import os
 import requests
 
-BASE_URL = os.getenv("BASE_URL")
+from test_integration.helpers import BASE_URL, INTEGRATION_TIMEOUT
 
 
 def test_health_endpoint():
@@ -10,7 +10,7 @@ def test_health_endpoint():
 
     response = requests.get(
         f"{BASE_URL}/health/",
-        timeout=10
+        timeout=INTEGRATION_TIMEOUT,
     )
 
     assert response.status_code == 200

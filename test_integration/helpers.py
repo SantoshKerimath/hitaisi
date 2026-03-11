@@ -2,17 +2,23 @@ import os
 import requests
 
 BASE_URL = os.getenv("BASE_URL")
+# Single lever to control external-call timeouts for integration tests.
+# Can be overridden in CI via INTEGRATION_TEST_TIMEOUT (in seconds).
+INTEGRATION_TIMEOUT = int(os.getenv("INTEGRATION_TEST_TIMEOUT", "30"))
 
 
-def login_request(email: str, password: str, *, timeout: int = 10):
+def login_request(email: str, password: str, *, timeout: int | None = None):
+    if timeout is None:
+        timeout = INTEGRATION_TIMEOUT
     return requests.post(
         f"{BASE_URL}/auth/login/",
         json={"email": email, "password": password},
         timeout=timeout,
     )
 
-
-def create_ci_user(admin_token: str, *, timeout: int = 10):
+def create_ci_user(admin_token: str, *, timeout: int | None = None):
+    if timeout is None:
+        timeout = INTEGRATION_TIMEOUT
     return requests.post(
         f"{BASE_URL}/users/create/",
         json={
@@ -24,8 +30,10 @@ def create_ci_user(admin_token: str, *, timeout: int = 10):
         timeout=timeout,
     )
 
+def get_access_token(email: str, password: str, *, timeout: int | None = None) -> str:
+    if timeout is None:
+        timeout = INTEGRATION_TIMEOUT
 
-def get_access_token(email: str, password: str, *, timeout: int = 10) -> str:
     response = login_request(email, password, timeout=timeout)
     if response.status_code != 200:
         # Common production/CI failure mode: secrets point to a user that doesn't exist or is inactive.
