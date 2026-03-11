@@ -26,6 +26,8 @@ jobs:
           --health-retries=5
 
     env:
+      # Opt into Node.js 24 for GitHub's JavaScript actions to avoid the Node 20 deprecation warning
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/hitaisi?sslmode=disable
       DJANGO_ENV: production
       SECRET_KEY: ci-secret-key
