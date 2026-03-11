@@ -27,5 +27,21 @@ def create_ci_user(admin_token: str, *, timeout: int = 10):
 
 def get_access_token(email: str, password: str, *, timeout: int = 10) -> str:
     response = login_request(email, password, timeout=timeout)
-    assert response.status_code == 200, response.text
+    if response.status_code != 200:
+        # Common production/CI failure mode: secrets point to a user that doesn't exist or is inactive.
+        hint = ""
+        try:
+            body = response.json()
+            if isinstance(body, dict) and body.get("detail") == "No active account found with the given credentials":
+                hint = (
+                    "\n\nHint: The deployed API rejected TEST_EMAIL/TEST_PASSWORD. "
+                    "Verify the GitHub Secrets values match an existing *active* user "
+                    "in the deployed environment."
+                )
+        except Exception:
+            pass
+
+        raise AssertionError(
+            f"Login failed: {response.status_code} {response.text}{hint}"
+        )
     return response.json()["access"]
